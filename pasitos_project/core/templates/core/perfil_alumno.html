@@ -1,0 +1,479 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasitos al Saber - Perfil de {{ perfil.nombre_usuario|default:"Aventurero" }}</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #BDEBF3; 
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- ENCABEZADO SUPERIOR (AZUL) --- */
+        .header-perfil {
+            background-color: #5DADE2; 
+            padding: 15px 40px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            color: white;
+            z-index: 5;
+        }
+
+        .avatar-container {
+            width: 90px;
+            height: 90px;
+            background-color: #E84393; 
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border: 3px solid white;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.15);
+            margin-right: 20px;
+        }
+
+        .avatar-container img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+        }
+
+        .info-alumno h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        }
+
+        .info-alumno p {
+            margin: 5px 0 0 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* --- CONTENEDOR PRINCIPAL INTERNO --- */
+        .main-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 120px);
+        }
+
+        /* Menú Lateral Izquierdo */
+        .sidebar {
+            width: 260px;
+            background-color: #2980B9;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0px 6px rgba(0, 0, 0, 0.1);
+            z-index: 4;
+        }
+
+        .sidebar-btn {
+            background-color: #2980B9;
+            color: white;
+            border: none;
+            padding: 18px 15px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            font-family: inherit;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 2px solid #2471A3;
+            transition: background-color 0.2s ease;
+            text-decoration: none;
+        }
+
+        .sidebar-btn:hover {
+            background-color: #3498DB;
+        }
+
+        .sidebar-btn.active {
+            background-color: #2ECC71;
+            border-bottom: 2px solid #27AE60;
+        }
+
+        .sidebar-btn.btn-logout {
+            background-color: #E74C3C;
+            border-bottom: none;
+            margin-top: auto; 
+        }
+
+        .sidebar-btn.btn-logout:hover {
+            background-color: #C0392B;
+        }
+
+        /* Contenido del Panel Derecho */
+        .content-area {
+            flex: 1;
+            background-color: #EBF5FB;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* --- CONTROL DE SECCIONES DINÁMICAS --- */
+        .section-panel {
+            display: none; 
+        }
+        
+        .section-panel.active-panel {
+            display: block; 
+        }
+
+        h2.section-title {
+            color: #2C3E50;
+            margin-top: 0;
+            font-size: 1.8rem;
+            border-bottom: 3px dashed #3498DB;
+            padding-bottom: 10px;
+        }
+
+        /* Listado de Maestros */
+        .maestros-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .maestro-item {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .maestro-icon {
+            width: 55px;
+            height: 55px;
+            background-color: #BDC3C7;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .maestro-icon::before {
+            content: '👤';
+            font-size: 2rem;
+        }
+
+        .maestro-info {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2C3E50;
+        }
+
+        /* Tarjeta Lección del Día */
+        .leccion-card {
+            background-color: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            border: 4px solid #9B59B6;
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .btn-start-lesson {
+            background-color: #9B59B6;
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            font-size: 1.3rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #7D3C98;
+            margin-top: 15px;
+        }
+
+        .btn-start-lesson:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* ESTADOS VACÍOS (Empty States) */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            max-width: 600px;
+            margin: 0 auto;
+            border: 3px dashed #BDC3C7;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .empty-state h3 {
+            color: #34495E;
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+        }
+
+        .empty-state p {
+            color: #7F8C8D;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        /* Barras del Centro Parental en Cero */
+        .parental-grid {
+            background-color: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            color: #34495E;
+        }
+
+        .stat-row {
+            margin-bottom: 20px;
+        }
+
+        .stat-label {
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar-bg {
+            background-color: #E5E7E9;
+            border-radius: 10px;
+            width: 100%;
+            height: 12px;
+            display: inline-block;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        /* Ajustes Switches */
+        .ajustes-box {
+            background-color: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            color: #34495E;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px dashed #BDC3C7;
+        }
+
+        .setting-item:last-child { border-bottom: none; }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #CCC;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px; width: 26px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: #2ECC71; }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+    </style>
+</head>
+<body>
+
+    <div class="header-perfil">
+        <div class="avatar-container">
+            {% if perfil.avatar == 'avatar1' %}
+                <img src="{% static 'core/Imagenes/avatar1.png' %}" alt="Avatar">
+            {% elif perfil.avatar == 'avatar2' %}
+                <img src="{% static 'core/Imagenes/avatar2.png' %}" alt="Avatar">
+            {% elif perfil.avatar == 'avatar3' %}
+                <img src="{% static 'core/Imagenes/avatar3.png' %}" alt="Avatar">
+            {% elif perfil.avatar == 'avatar4' %}
+                <img src="{% static 'core/Imagenes/avatar4.png' %}" alt="Avatar">
+            {% else %}
+                <img src="{% static 'core/Imagenes/avatar1.png' %}" alt="Avatar">
+            {% endif %}
+        </div>
+        <div class="info-alumno">
+            <h1>{{ perfil.nombre_usuario|default:"Estudiante" }}</h1>
+            <p>Edad: {{ perfil.edad|default:"-" }} años</p>
+        </div>
+    </div>
+
+    <div class="main-container">
+        
+        <div class="sidebar">
+            <button class="sidebar-btn" onclick="openSection(event, 'leccion-dia')">Lección del día</button>
+            <button class="sidebar-btn active" onclick="openSection(event, 'maestros')">Maestros</button>
+            <button class="sidebar-btn" onclick="openSection(event, 'historial')">Historial de lecciones</button>
+            <button class="sidebar-btn" onclick="openSection(event, 'parental')">Control Parental</button>
+            <button class="sidebar-btn" onclick="openSection(event, 'ajustes')">Ajustes</button>
+            
+            {% if perfil.edad >= 5 %}
+                <a href="{% url 'dashboard_infantil_alta' %}" class="sidebar-btn" style="background-color: #F39C12;">Volver al Mapa</a>
+            {% else %}
+                <a href="{% url 'dashboard_infantil_baja' %}" class="sidebar-btn" style="background-color: #F39C12;">Volver al Mapa</a>
+            {% endif %}
+
+            <a href="{% url 'pantalla_carga' %}" class="sidebar-btn btn-logout">Cerrar Sesión</a>
+        </div>
+
+        <div class="content-area">
+
+            <div id="leccion-dia" class="section-panel">
+                <h2 class="section-title">⭐ Mi Primera Lección ⭐</h2>
+                <div class="leccion-card">
+                    <span class="empty-icon">🚀</span>
+                    {% if perfil.edad >= 5 %}
+                        <h2>¡Bienvenido al Desafío de Sílabas!</h2>
+                        <p>Tu aventura académica inicia hoy. Haz clic abajo para descubrir cómo suenan tus primeras letras.</p>
+                    {% else %}
+                        <h2>¡Bienvenido al Mundo de Colores!</h2>
+                        <p>Tu primer juego interactivo te espera. ¡Vamos a descubrir los colores mágicos del parque!</p>
+                    {% endif %}
+                    <button class="btn-start-lesson">¡Empezar Aventura!</button>
+                </div>
+            </div>
+
+            <div id="maestros" class="section-panel active-panel">
+                <h2 class="section-title">Mis Maestros Guía</h2>
+                <div class="maestros-list">
+                    <div class="maestro-item">
+                        <div class="maestro-icon"></div>
+                        <div class="maestro-info">Karen Beatriz Jandres Chavez</div>
+                    </div>
+                    <div class="maestro-item">
+                        <div class="maestro-icon"></div>
+                        <div class="maestro-info">Yessica Raquel Reyes Juarez</div>
+                    </div>
+                    <div class="maestro-item">
+                        <div class="maestro-icon"></div>
+                        <div class="maestro-info">Astrid Marcela Arguello Guzman</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="historial" class="section-panel">
+                <h2 class="section-title">Historial de Mis Aventuras Escolares</h2>
+                <div class="empty-state">
+                    <span class="empty-icon">🗺️</span>
+                    <h3>¡Tu mapa está listo para ser explorado!</h3>
+                    <p>Aún no has completado juegos. Cuando entres al mapa y termines una misión, aquí verás todas tus estrellitas y medallas logradas.</p>
+                </div>
+            </div>
+
+            <div id="parental" class="section-panel">
+                <h2 class="section-title">🔒 Centro de Monitoreo Parental</h2>
+                <div class="parental-grid">
+                    <h3>Reporte de progreso de {{ perfil.nombre_usuario|default:"el alumno" }}</h3>
+                    <p style="color: #7F8C8D; margin-bottom: 25px;">El alumno acaba de registrarse. Las métricas se actualizarán de forma automática con base en su desempeño:</p>
+                    
+                    <div class="stat-row">
+                        <div class="stat-label"><span>Desarrollo Lógico / Matemático</span><span>0%</span></div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 0%; background-color: #FF7043;"></div></div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label"><span>Comprensión Lectora / Comunicación</span><span>0%</span></div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 0%; background-color: #26A69A;"></div></div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label"><span>Psicomotricidad y Coordinación</span><span>0%</span></div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 0%; background-color: #AB47BC;"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ajustes" class="section-panel">
+                <h2 class="section-title">⚙️ Configuración del Sistema</h2>
+                <div class="ajustes-box">
+                    <div class="setting-item">
+                        <div>
+                            <strong style="font-size: 1.1rem; display:block;">Música de Fondo</strong>
+                            <span style="font-size:0.9rem; color:#7F8C8D;">Melodías infantiles de relajación durante las misiones</span>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong style="font-size: 1.1rem; display:block;">Efectos de Sonido</strong>
+                            <span style="font-size:0.9rem; color:#7F8C8D;">Sonidos interactivos al presionar botones correctos</span>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong style="font-size: 1.1rem; display:block;">Modo Letra Grande</strong>
+                            <span style="font-size:0.9rem; color:#7F8C8D;">Aumenta las fuentes tipográficas para facilitar lectura temprana</span>
+                        </div>
+                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        function openSection(evt, sectionId) {
+            const panels = document.getElementsByClassName("section-panel");
+            for (let i = 0; i < panels.length; i++) {
+                panels[i].classList.remove("active-panel");
+            }
+
+            const sidebarButtons = document.getElementsByClassName("sidebar-btn");
+            for (let i = 0; i < sidebarButtons.length; i++) {
+                sidebarButtons[i].classList.remove("active");
+            }
+
+            document.getElementById(sectionId).classList.add("active-panel");
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+
+</body>
+</html>

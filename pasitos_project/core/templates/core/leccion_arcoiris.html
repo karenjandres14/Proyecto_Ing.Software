@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>El Arcoíris Mágico - Pasitos Al Saber</title>
+    <style>
+        body {
+            background-color: #E3F2FD;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 10px 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .avatar-mini {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid #FF4081;
+        }
+        .game-container {
+            background: white;
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .fase { display: none; }
+        .fase.activa { display: block; }
+        
+        /* Estilos de botones interactivos */
+        .opciones-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .btn-objeto {
+            background: #FFF9C4;
+            border: 4px solid #FBC02D;
+            border-radius: 20px;
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn-objeto:hover { transform: scale(1.1); }
+        
+        /* Tamaños */
+        .nube-pequena { width: 60px; cursor: pointer; }
+        .nube-mediana { width: 110px; cursor: pointer; }
+        .nube-grande { width: 170px; cursor: pointer; }
+
+        .btn-siguiente {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>🌈 Lección: El Arcoíris Mágico</h2>
+        <div>
+            <span style="font-weight: bold; margin-right: 10px;">¡Hola, {{ perfil.nombre_usuario }}!</span>
+            <img src="{% static 'core/imagenes/' %}{{ perfil.avatar }}.png" class="avatar-mini" alt="Avatar">
+        </div>
+    </div>
+
+    <div class="game-container">
+        
+        <div id="fase1" class="fase activa">
+            <h3>Fase 1: ¿De qué color es la Manzana? 🍎</h3>
+            <p>Haz clic en el color correcto para pintar la manzana del arcoíris:</p>
+            <div class="opciones-container">
+                <button class="btn-objeto" onclick="correctoFase1(this, 'azul')" style="background:#29B6F6;">Azul 🟦</button>
+                <button class="btn-objeto" onclick="correctoFase1(this, 'rojo')" style="background:#EF5350; color:white;">Rojo 🟥</button>
+                <button class="btn-objeto" onclick="correctoFase1(this, 'verde')" style="background:#66BB6A;">Verde 🟩</button>
+            </div>
+            <button id="next1" class="btn-siguiente" style="display:none;" onclick="cambiarFase(2)">¡Siguiente Desafío! ➡️</button>
+        </div>
+
+        <div id="fase2" class="fase">
+            <h3>Fase 2: ¡Encuentra la nube más GRANDE! ☁️</h3>
+            <p>Haz clic sobre la nube gigante para que aparezca el sol.</p>
+            <div class="opciones-container" style="align-items: center;">
+                <span onclick="alert('¡Esta es la pequeña! Intenta otra vez.')" style="font-size: 40px; cursor:pointer;">☁️</span>
+                <span onclick="alert('¡Esta es mediana! Falta poco.')" style="font-size: 70px; cursor:pointer;">☁️</span>
+                <span onclick="correctoFase2()" style="font-size: 120px; cursor:pointer; color: #29B6F6;">☁️</span>
+            </div>
+            <button id="next2" class="btn-siguiente" style="display:none;" onclick="cambiarFase(3)">¡Siguiente Desafío! ➡️</button>
+        </div>
+
+        <div id="fase3" class="fase">
+            <h3>🌟 ¡Felicidades! Completaste la lección</h3>
+            <p>Haz clic abajo para guardar tu estrellita y volver al mapa.</p>
+            <button class="btn-siguiente" style="background: #FF5722; font-size: 22px;" onclick="finalizarJuego()">🎉 ¡Guardar mi Progreso! 🎉</button>
+        </div>
+
+    </div>
+
+    <script>
+        function cambiarFase(num) {
+            document.querySelectorAll('.fase').forEach(f => f.classList.remove('activa'));
+            document.getElementById('fase' + num).classList.add('activa');
+        }
+
+        function correctoFase1(btn, color) {
+            if(color === 'rojo') {
+                alert("¡Excelente! La manzana es Roja ❤️");
+                document.getElementById('next1').style.display = 'inline-block';
+            } else {
+                alert("¡Oh, intenta otra vez! Ese objeto no es de ese color.");
+            }
+        }
+
+        function correctoFase2() {
+            alert("¡Increíble! ¡Encontraste la nube más grande! 🌤️");
+            document.getElementById('next2').style.display = 'inline-block';
+        }
+
+        // ENVIAR DATA AL BACKEND POR AJAX/FETCH (Seguimiento del progreso)
+        function finalizarJuego() {
+            const formData = new FormData();
+            formData.append('leccion_nombre', 'arcoiris');
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+            fetch("{% url 'guardar_progreso' %}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    alert("✨ ¡Progreso guardado con éxito! Volviendo al mapa...");
+                    window.location.href = "{% url 'dashboard_baja' %}"; // Redirecciona de vuelta al mapa
+                } else {
+                    alert("Hubo un detalle guardando tu progreso.");
+                }
+            });
+        }
+    </script>
+</body>
+</html>

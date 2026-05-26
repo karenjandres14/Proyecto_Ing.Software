@@ -1,0 +1,289 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crea tu Perfil - Pasitos al Saber</title>
+    <style>
+        body {
+            background-color: #D1F2F7;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 {
+            color: #1A73E8;
+            text-shadow: 2px 2px 0px #fff;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #000;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input[type="text"], input[type="number"] {
+            width: 80%;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: none;
+            font-size: 1.1rem;
+            color: white;
+            outline: none;
+        }
+        input[type="text"]::placeholder, input[type="number"]::placeholder {
+            color: #f0f0f0;
+        }
+        .bg-green-light { background-color: #8CD867; }
+        .bg-green-dark { background-color: #00B965; }
+        
+        .avatar-section {
+            margin-top: 25px;
+        }
+        .avatar-label {
+            font-size: 1.3rem;
+            color: #000;
+            display: block;
+            margin-bottom: 15px;
+        }
+        .avatars-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .avatar-box {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s, border 0.2s;
+            border: 4px solid transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .av1 { background-color: #A9D4FF; }
+        .av2 { background-color: #FFE699; }
+        .av3 { background-color: #F7A8DB; }
+        .av4 { background-color: #FFE699; }
+
+        .avatar-box img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+        }
+        .avatar-box.selected {
+            border: 5px solid #1A73E8;
+            transform: scale(1.1);
+        }
+        .btn-submit {
+            background-color: #54A0D6;
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0px 4px 0px #3A78A6;
+        }
+        .btn-submit:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .profile-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        .profile-name {
+            margin-top: 8px;
+            font-weight: bold;
+            color: #1A73E8;
+            font-size: 1.1rem;
+        }
+        .btn-link {
+            background: none;
+            border: none;
+            color: #00B965;
+            font-family: inherit;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Bienvenido/a al mundo de "Pasitos Al Saber"</h1>
+
+    <div id="seccion_seleccionar_perfil" style="display: none;">
+        <h2>¿Quién va a jugar hoy?</h2>
+        <div class="avatars-container" id="contenedor_perfiles_locales">
+            </div>
+        <button type="button" class="btn-link" onclick="mostrarFormularioCreacion()">➕ Crear otro perfil</button>
+    </div>
+
+    <div id="seccion_crear_perfil" style="display: none;">
+        <h2>Crea el perfil de tu Aventurero/a</h2>
+
+        <form method="POST" id="perfilForm">
+           {% csrf_token %}
+            <div class="form-group">
+                <input type="text" id="input_nombre" name="nombre_usuario" class="bg-green-light" placeholder="Nombre de Usuario:" required>
+            </div>
+            <div class="form-group">
+                <input type="number" id="input_edad" name="edad" class="bg-green-dark" placeholder="Edad:" min="3" max="7" required>
+            </div>
+
+            <div class="avatar-section">
+                <span class="avatar-label">Elige un avatar divertido:</span>
+                <div class="avatars-container">
+                    <div class="avatar-box av1" onclick="selectAvatar('avatar1', this)">
+                        <img src="{% static 'core/Imagenes/avatar1.png' %}" alt="Avatar 1">
+                    </div>
+                    <div class="avatar-box av2" onclick="selectAvatar('avatar2', this)">
+                        <img src="{% static 'core/Imagenes/avatar2.png' %}" alt="Avatar 2">
+                    </div>
+                    <div class="avatar-box av3" onclick="selectAvatar('avatar3', this)">
+                        <img src="{% static 'core/Imagenes/avatar3.png' %}" alt="Avatar 3">
+                    </div>
+                    <div class="avatar-box av4" onclick="selectAvatar('avatar4', this)">
+                        <img src="{% static 'core/Imagenes/avatar4.png' %}" alt="Avatar 4">
+                    </div>
+                    
+                </div>
+            </div>
+
+            <input type="hidden" name="avatar" id="avatar_selected" required>
+
+            <button type="submit" class="btn-submit">¡Listo para Jugar!</button>
+            <br>
+            <button type="button" id="btnVolverSeleccion" class="btn-link" style="display: none;" onclick="inicializarPantalla()">Regresar</button>
+        </form>
+    </div>
+
+    <form method="POST" id="fastLoginForm" style="display: none;">
+        {% csrf_token %}
+        <input type="hidden" name="perfil_id_existente" id="input_fast_perfil_id">
+    </form>
+</div>
+
+<script>
+    // 1. Cargamos de forma segura la lista de perfiles que viven actualmente en tu MySQL
+    const perfilesDesdeBD = [
+        {% for p in perfiles_guardados %}
+        { id: "{{ p.id }}", nombre: "{{ p.nombre_usuario }}", edad: "{{ p.edad }}", avatar: "{{ p.avatar }}" },
+        {% endfor %}
+    ];
+
+    // 2. Si venimos de registrar un perfil exitosamente, guardamos su ID de inmediato antes de cualquier acción
+    {% if perfil_recien_creado_id %}
+        let perfilesDispositivo = JSON.parse(localStorage.getItem('mis_perfiles_pasitos') || "[]");
+        // Evitamos guardar IDs duplicados
+        if (!perfilesDispositivo.includes("{{ perfil_recien_creado_id }}")) {
+            perfilesDispositivo.push("{{ perfil_recien_creado_id }}");
+            localStorage.setItem('mis_perfiles_pasitos', JSON.stringify(perfilesDispositivo));
+        }
+
+        // Redirección forzada desde el backend según la edad asignada
+        let edad = parseInt("{{ edad_redireccion }}");
+        if (edad === 3 || edad === 4) {
+            window.location.href = "{% url 'dashboard_infantil_baja' %}";
+        } else {
+            window.location.href = "{% url 'dashboard_infantil_alta' %}";
+        }
+    {% endif %}
+
+    function selectAvatar(avatarId, element) {
+        document.querySelectorAll('.avatar-box').forEach(box => {
+            box.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        document.getElementById('avatar_selected').value = avatarId;
+    }
+
+    // 3. Evalúa el estado del almacenamiento del dispositivo frente a la Base de Datos MySQL
+    function inicializarPantalla() {
+        // Leemos qué IDs se crearon en este navegador
+        let idsLocales = JSON.parse(localStorage.getItem('mis_perfiles_pasitos') || "[]");
+        
+        // Filtramos de forma estricta: Solo dejamos los que coexistan en Local y en MySQL
+        const perfilesValidos = perfilesDesdeBD.filter(p => idsLocales.includes(p.id.toString()));
+
+        // Sincronizamos la memoria local para limpiar rastros de perfiles eliminados en phpMyAdmin
+        const idsFiltrados = perfilesValidos.map(p => p.id.toString());
+        localStorage.setItem('mis_perfiles_pasitos', JSON.stringify(idsFiltrados));
+
+        // CONTROL DE FLUJO DE PANTALLAS
+        if (perfilesValidos.length > 0) {
+            // Caso con perfiles creados: Muestra la pantalla de selección múltiple (¿Quién va a jugar hoy?)
+            document.getElementById('seccion_crear_perfil').style.display = 'none';
+            document.getElementById('seccion_seleccionar_perfil').style.display = 'block';
+
+            const contenedor = document.getElementById('contenedor_perfiles_locales');
+            contenedor.innerHTML = '';
+
+            // Renderizamos los avatares de todos los niños registrados en este dispositivo
+            perfilesValidos.forEach(p => {
+                let colorClass = p.avatar === 'avatar1' ? 'av1' : p.avatar === 'avatar2' ? 'av2' : p.avatar === 'avatar3' ? 'av3' : 'av4';
+                contenedor.innerHTML += `
+                    <div class="profile-item" onclick="entrarConPerfilExistente('${p.id}')">
+                        <div class="avatar-box ${colorClass}">
+                            <img src="/static/core/Imagenes/${p.avatar}.png" alt="${p.nombre}">
+                        </div>
+                        <span class="profile-name">${p.nombre}</span>
+                    </div>
+                `;
+            });
+        } else {
+            // Caso sin perfiles (o borrados): Muestra directamente la pantalla limpia para crear un perfil nuevo
+            mostrarFormularioCreacion();
+            document.getElementById('btnVolverSeleccion').style.display = 'none';
+        }
+    }
+
+    function mostrarFormularioCreacion() {
+        document.getElementById('seccion_crear_perfil').style.display = 'block';
+        document.getElementById('seccion_seleccionar_perfil').style.display = 'none';
+        
+        let idsLocales = JSON.parse(localStorage.getItem('mis_perfiles_pasitos') || "[]");
+        if (idsLocales.length > 0) {
+            document.getElementById('btnVolverSeleccion').style.display = 'inline-block';
+        }
+    }
+
+    function entrarConPerfilExistente(id) {
+        document.getElementById('input_fast_perfil_id').value = id;
+        document.getElementById('fastLoginForm').submit();
+    }
+
+    document.getElementById('perfilForm').onsubmit = function(e) {
+        if (!document.getElementById('avatar_selected').value) {
+            alert("¡Por favor elige un avatar divertido antes de jugar!");
+            e.preventDefault();
+        }
+    };
+
+    // Ejecutamos la validación automática apenas termine de cargar el DOM
+    window.onload = inicializarPantalla;
+</script>
+
+</body>
+</html>

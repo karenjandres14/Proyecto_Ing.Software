@@ -1,0 +1,217 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasitos al Saber - Panel de Tutores</title>
+    <style>
+        body {
+            background-color: #E0F7FA; /* Celeste claro idéntico al fondo original */
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .panel-container {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* --- TÍTULO PRINCIPAL --- */
+        .titulo-panel {
+            font-size: 3.2rem;
+            color: #2E5B88; /* Azul grisáceo del título original */
+            margin: 0 0 10px 0;
+            font-weight: bold;
+            text-shadow: 
+                -2px -2px 0 #FFF,  
+                 2px -2px 0 #FFF,
+                -2px  2px 0 #FFF,
+                 2px  2px 0 #FFF;
+        }
+
+        .subtitulo-panel {
+            font-size: 1.8rem;
+            color: #000000;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: left;
+            padding-left: 40px;
+        }
+
+        /* --- SECCIÓN DEL HIJO ACTIVO --- */
+        .exploradores-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .tarjeta-explorador {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 200px;
+        }
+
+        .avatar-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        /* Colores lógicos según el avatar seleccionado por el niño */
+        .bg-avatar1 { background-color: #FFE082; } /* Amarillo */
+        .bg-avatar2 { background-color: #90CAF9; } /* Azul */
+        .bg-avatar3 { background-color: #F48FB1; } /* Rosado */
+        .bg-default { background-color: #A5D6A7; } /* Verde opcional */
+
+        .avatar-circle img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+        }
+
+        .nombre-hijo {
+            font-size: 1.8rem;
+            color: #2E5B88;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .edad-hijo {
+            font-size: 1.6rem;
+            color: #2E5B88;
+            margin: 2px 0;
+            font-weight: bold;
+        }
+
+        .lecciones-hijo {
+            font-size: 1.5rem;
+            color: #2E5B88;
+            margin: 2px 0;
+            font-weight: bold;
+        }
+
+        .lecciones-hijo strong {
+            color: #000000;
+            font-size: 1.7rem;
+        }
+
+        /* --- BOTONERA CENTRAL --- */
+        .botonera-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .btn-panel {
+            width: 100%;
+            max-width: 420px;
+            padding: 12px 20px;
+            font-family: 'Comic Sans MS', sans-serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0px 4px 0px rgba(0,0,0,0.15);
+            transition: transform 0.1s ease, filter 0.2s;
+        }
+
+        .btn-panel:active {
+            transform: translateY(3px);
+            box-shadow: 0px 1px 0px rgba(0,0,0,0.15);
+        }
+
+        .btn-panel:hover {
+            filter: brightness(1.05);
+        }
+
+        .btn-gestion { background-color: #7CD147; } /* Verde claro */
+        .btn-reporte { background-color: #00C853; } /* Verde medio */
+        .btn-tiempo   { background-color: #00796B; } /* Verde oscuro */
+
+        /* --- DECORACIONES --- */
+        .huellas-decorativas {
+            position: absolute;
+            bottom: 60px;
+            right: 12%;
+            font-size: 2.2rem;
+            opacity: 0.8;
+            transform: rotate(-15deg);
+        }
+
+        .btn-regresar {
+            position: absolute;
+            top: 25px;
+            left: 30px;
+            background-color: #FFFFFF;
+            color: #2E5B88;
+            padding: 10px 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <a href="javascript:history.back()" class="btn-regresar">⬅ Volver al Juego</a>
+
+    <div class="panel-container">
+        <h1 class="titulo-panel">Panel de Tutores</h1>
+        <p class="subtitulo-panel">Tus pequeños exploradores:</p>
+
+        <div class="exploradores-grid">
+            {% if hijo %}
+            <div class="tarjeta-explorador">
+                <div class="avatar-circle {% if hijo.avatar == 'avatar1' %}bg-avatar1{% elif hijo.avatar == 'avatar2' %}bg-avatar2{% elif hijo.avatar == 'avatar3' %}bg-avatar3{% else %}bg-default{% endif %}">
+                    {% if hijo.avatar %}
+                        <img src="{% static 'core/Imagenes/' %}{{ hijo.avatar }}.png" alt="Avatar">
+                    {% else %}
+                        <img src="{% static 'core/Imagenes/avatar1.png' %}" alt="Avatar">
+                    {% endif %}
+                </div>
+                <h2 class="nombre-hijo">{{ hijo.nombre_usuario }}</h2>
+                <p class="edad-hijo">{{ hijo.edad }}</p>
+                <p class="lecciones-hijo">Lecciones: <strong>20</strong></p>
+            </div>
+            {% else %}
+            <p style="font-size: 1.3rem; color: #546E7A; font-weight: bold;">No hay ningún aventurero activo en este momento.</p>
+            {% endif %}
+        </div>
+
+        <div class="botonera-panel">
+            <button class="btn-panel btn-gestion" onclick="location.href='#'">Gestión de Contenido</button>
+            <button class="btn-panel btn-reporte" onclick="location.href='#'">Enviar reporte por mensaje</button>
+            <button class="btn-panel btn-tiempo" onclick="location.href='#'">Tiempo diario</button>
+        </div>
+    </div>
+
+    <div class="huellas-decorativas">👣</div>
+
+</body>
+</html>
