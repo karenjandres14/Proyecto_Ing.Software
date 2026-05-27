@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404  # <-- ACTUALIZADO: Se añade get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import PerfilAventurero, Registro  # <-- IMPORTANTE: Importa el nuevo modelo aquí
 
@@ -129,7 +129,7 @@ def perfil_alumno_view(request):
     return render(request, 'core/perfil_alumno.html', {'perfil': perfil})
 
 
-# --- CONTROL DE PADRES (CORREGIDO Y AJUSTADO AL ALUMNO ACTIVO) ---
+# --- CONTROL DE PADRES (GESTIÓN DE PERFILES DESDE EL ÁREA DE TUTORES) ---
 
 def panel_tutores(request):
     # 1. Intentamos buscar al niño que está jugando actualmente usando el ID de la sesión
@@ -148,3 +148,44 @@ def panel_tutores(request):
         'hijo': niño_activo,
     }
     return render(request, 'core/panel_tutores.html', context)
+
+
+# 1. Vista principal del área de padres para listar perfiles (OPTIMIZADA CON BUSCADOR Y REGRESO)
+def area_padres(request):
+    todos_los_perfiles = PerfilAventurero.objects.all().order_by('-id')
+    total_aventureros = todos_los_perfiles.count()
+    
+    # Determinar a qué mapa regresar si el padre presiona "Volver al Mapa"
+    ultimo_perfil = todos_los_perfiles.first()
+    if ultimo_perfil and ultimo_perfil.edad in [3, 4]:
+        ruta_mapa_principal = 'dashboard_infantil_baja'
+    else:
+        ruta_mapa_principal = 'dashboard_infantil_alta'
+
+    contexto = {
+        'perfiles': todos_los_perfiles,
+        'total_aventureros': total_aventureros,
+        'ruta_mapa_principal': ruta_mapa_principal
+    }
+    return render(request, 'core/area_padres.html', contexto)
+
+
+# 2. Vista para Editar un Perfil Existente
+def editar_perfil(request, perfil_id):
+    perfil = get_object_or_404(PerfilAventurero, id=perfil_id)
+    
+    if request.method == 'POST':
+        perfil.nombre_usuario = request.POST.get('nombre_usuario')
+        perfil.edad = int(request.POST.get('edad'))
+        perfil.avatar = request.POST.get('avatar')
+        perfil.save()  # Guarda los cambios en MySQL
+        return redirect('area_padres')  # Regresa al panel de control
+        
+    return render(request, 'core/editar_perfil.html', {'perfil': perfil})
+
+
+# 3. Vista para Eliminar un Perfil
+def eliminar_perfil(request, perfil_id):
+    perfil = get_object_or_404(PerfilAventurero, id=perfil_id)
+    perfil.delete()  # Borra el registro de MySQL
+    return redirect('area_padres')

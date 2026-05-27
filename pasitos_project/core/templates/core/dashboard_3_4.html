@@ -360,7 +360,7 @@
     <div class="parque-map">
         
         <div class="estacion-juego" onclick="location.href='#'">
-            <div class="arbusto"><span class="icono-estacion">🌈</span></div>
+            <div class="arbusto"><span class="icono-estacion"></span></div>
         </div>
         <div class="estacion-juego" onclick="location.href='#'">
             <div class="arbusto"><span class="icono-estacion">⛲</span></div>
@@ -391,9 +391,6 @@
 
     </div>
 
-
-    </div>
-
     <script>
         function toggleMenu() {
             const sidebar = document.getElementById('sidebarMenu');
@@ -403,21 +400,24 @@
             overlay.classList.toggle('active');
         }
 
+        // --- FUNCIÓN DE VERIFICACIÓN MATEMÁTICA ACTUALIZADA ---
         function verificarPadres(event) {
             event.preventDefault();
             
-            // Filtro de seguridad por multiplicación
+            // Genera la multiplicación aleatoria de forma dinámica
             const num1 = Math.floor(Math.random() * 4) + 5; 
             const num2 = Math.floor(Math.random() * 3) + 3; 
-            const resultadoCorrecto = num1 * num2;
+            const respuestaCorrecta = num1 * num2;
             
             const respuestaUsuario = prompt(`¡Espacio de seguridad! 🔒\nPara entrar al Área de Padres, resuelve la operación:\n¿Cuánto es ${num1} x ${num2}?`);
             
-            if (parseInt(respuestaUsuario) === resultadoCorrecto) {
-                // Redirige automáticamente a la nueva página del Panel de Tutores
-                window.location.href = "{% url 'panel_tutores' %}";
+            if (parseInt(respuestaUsuario) === respuestaCorrecta) {
+                alert("¡Verificación aprobada! Abriendo opciones de configuración...");
+                
+                // Redireccionamos a la URL de Django para el área de padres
+                window.location.href = "{% url 'area_padres' %}";
             } else {
-                alert("Respuesta incorrecta. ¡Acceso protegido para adultos! ⛔");
+                alert("Respuesta incorrecta. Solo los adultos pueden ingresar. ⛔");
             }
         }
     </script>

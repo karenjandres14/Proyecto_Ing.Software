@@ -518,6 +518,9 @@
             
             if (parseInt(respuestaUsuario) === resultadoCorrecto) {
                 alert("¡Verificación aprobada! Abriendo opciones de configuración...");
+                
+                // Redireccionamos a la URL de Django correspondiente al área de padres
+                window.location.href = "{% url 'area_padres' %}";
             } else {
                 alert("Respuesta incorrecta. ¡Acceso protegido para adultos! ⛔");
             }

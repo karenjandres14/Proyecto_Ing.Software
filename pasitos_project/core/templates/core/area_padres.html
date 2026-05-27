@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasitos al Saber - Área de Padres</title>
+    <style>
+        body {
+            background-color: #F3E5F5; 
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            margin: 0;
+            padding: 30px;
+        }
+        .panel-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 25px;
+            border: 5px solid #AB47BC; 
+            box-shadow: 0px 10px 0px #7B1FA2;
+            padding: 30px;
+        }
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px dashed #E0E0E0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header-panel h1 {
+            color: #7B1FA2;
+            margin: 0;
+            font-size: 2.2rem;
+        }
+        
+        /* Botones superiores */
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        .btn-header {
+            padding: 12px 24px;
+            border-radius: 15px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            font-size: 1rem;
+            transition: transform 0.1s;
+        }
+        .btn-mapa {
+            background-color: #4CAF50; /* Verde */
+            box-shadow: 0px 4px 0px #2E7D32;
+        }
+        .btn-nuevo {
+            background-color: #29B6F6; /* Azul */
+            box-shadow: 0px 4px 0px #0288D1;
+        }
+        .btn-header:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* Barra de herramientas estilizada (Solo Estadísticas) */
+        .tools-bar {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: #F5F5F5;
+            padding: 15px 25px;
+            border-radius: 15px;
+        }
+        .stats-box {
+            font-size: 1.1rem;
+            color: #455A64;
+            font-weight: bold;
+        }
+
+        /* Lista de Perfiles de Hijos */
+        .perfiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
+        }
+        .tarjeta-hijo {
+            background-color: #FAFAFA;
+            border: 3px solid #E0E0E0;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .tarjeta-hijo:hover {
+            transform: translateY(-5px);
+        }
+        .avatar-hijo-circulo {
+            width: 90px;
+            height: 90px;
+            background-color: #FFE699;
+            border-radius: 50%;
+            margin: 0 auto 15px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid #AB47BC;
+            overflow: hidden;
+        }
+        .avatar-hijo-circulo img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+        }
+        .tarjeta-hijo h3 {
+            margin: 5px 0;
+            color: #37474F;
+            font-size: 1.5rem;
+        }
+        .tarjeta-hijo p {
+            margin: 0 0 20px 0;
+            color: #78909C;
+            font-weight: bold;
+        }
+
+        /* Botones de Acción */
+        .acciones-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+        .btn-accion {
+            padding: 10px 20px;
+            border-radius: 12px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+        .btn-editar {
+            background-color: #FFB300;
+            box-shadow: 0px 4px 0px #FF8F00;
+        }
+        .btn-eliminar {
+            background-color: #E53935;
+            box-shadow: 0px 4px 0px #C62828;
+        }
+        .btn-accion:active {
+            transform: translateY(3px);
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="panel-container">
+        <div class="header-panel">
+            <h1>⚙️ Panel de Control (Padres)</h1>
+            
+            <div class="header-buttons">
+                <a href="{% url ruta_mapa_principal %}" class="btn-header btn-mapa">🗺️ Volver al Mapa</a>
+                <a href="{% url 'crear_perfil' %}" class="btn-header btn-nuevo">➕ Nuevo Aventurero</a>
+            </div>
+        </div>
+
+        <div class="tools-bar">
+            <div class="stats-box">
+                📊 Total de Aventureros Registrados: <span style="color: #7B1FA2;">{{ total_aventureros }}</span>
+            </div>
+        </div>
+        
+        <div class="perfiles-grid">
+            {% for p in perfiles %}
+            <div class="tarjeta-hijo">
+                <div class="avatar-hijo-circulo">
+                    {% if p.avatar == 'avatar1' %}
+                        <img src="{% static 'core/Imagenes/avatar1.png' %}" alt="Avatar">
+                    {% elif p.avatar == 'avatar2' %}
+                        <img src="{% static 'core/Imagenes/avatar2.png' %}" alt="Avatar">
+                    {% elif p.avatar == 'avatar3' %}
+                        <img src="{% static 'core/Imagenes/avatar3.png' %}" alt="Avatar">
+                    {% elif p.avatar == 'avatar4' %}
+                        <img src="{% static 'core/Imagenes/avatar4.png' %}" alt="Avatar">
+                    {% endif %}
+                </div>
+                <h3>{{ p.nombre_usuario }}</h3>
+                <p>Edad: {{ p.edad }} años</p>
+                
+                <div class="acciones-container">
+                    <a href="{% url 'editar_perfil' p.id %}" class="btn-accion btn-editar">✏️ Editar</a>
+                    <a href="{% url 'eliminar_perfil' p.id %}" class="btn-accion btn-eliminar" onclick="return confirm('¿Seguro que deseas eliminar permanentemente este perfil aventurero?');">🗑️ Borrar</a>
+                </div>
+            </div>
+            {% empty %}
+            <div style="grid-column: 1/-1; text-align: center; color: #78909C; padding: 20px;">
+                <p style="font-size: 1.2rem;">No hay perfiles creados todavía. ¡Crea uno usando el botón superior azul!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>

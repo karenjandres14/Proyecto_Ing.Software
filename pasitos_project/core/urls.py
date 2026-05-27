@@ -18,6 +18,8 @@ urlpatterns = [
     # Nueva ruta: Filtro de seguridad y panel de control de los padres
     path('panel-tutores/', views.panel_tutores, name='panel_tutores'),
     
-    
+    path('area-padres/', views.area_padres, name='area_padres'),
+    path('area-padres/editar/<int:perfil_id>/', views.editar_perfil, name='editar_perfil'),
+    path('area-padres/eliminar/<int:perfil_id>/', views.eliminar_perfil, name='eliminar_perfil'),
     
 ]
