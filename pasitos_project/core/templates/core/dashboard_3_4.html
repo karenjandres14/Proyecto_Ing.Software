@@ -94,39 +94,29 @@
             position: relative;
             cursor: pointer;
             transition: transform 0.2s ease;
+            /* SE ELIMINÓ EL ESTILO DE ARBUSTO VERDE */
         }
 
         .estacion-juego:hover {
             transform: scale(1.15);
         }
 
-        .arbusto {
-            width: 140px;
-            height: 140px;
-            background-color: #1E824C; 
-            border-radius: 50%;
+        /* Contenedor para tus imágenes (ocupa el espacio de la bolita verde) */
+        .contenedor-imagen {
+            width: 160px; /* Tamaño similar a las bolitas originales */
+            height: 160px;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: inset -10px -10px 0px rgba(0,0,0,0.15), 0px 8px 0px #135431;
             position: relative;
         }
 
-        .estacion-centro .arbusto {
-            width: 180px;
-            height: 180px;
-            background-color: #27AE60;
-            box-shadow: inset -12px -12px 0px rgba(0,0,0,0.15), 0px 10px 0px #1E824C;
-        }
-
-        .icono-estacion {
-            font-size: 4.5rem;
-            z-index: 2;
-            filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.2));
-        }
-
-        .estacion-centro .icono-estacion {
-            font-size: 6rem;
+        /* Estilo para las imágenes que agregues */
+        .contenedor-imagen img {
+            max-width: 100%; /* La imagen se ajusta al contenedor */
+            max-height: 100%;
+            object-fit: contain; /* Mantiene la proporción sin deformarse */
+            filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.2)); /* Sombra para dar profundidad */
         }
 
         .huellas {
@@ -136,12 +126,28 @@
             user-select: none;
         }
         
-        .h1 { top: 35%; left: 22%; transform: rotate(25deg); }
-        .h2 { top: 60%; left: 15%; transform: rotate(-15deg); }
-        .h3 { top: 25%; left: 52%; transform: rotate(45deg); }
-        .h4 { top: 55%; left: 58%; transform: rotate(110deg); }
-        .h5 { top: 70%; left: 38%; transform: rotate(-45deg); }
-        .h6 { top: 40%; left: 75%; transform: rotate(15deg); }
+        .h1 { top: 23%; left: 32%; transform: rotate(80deg); }
+        .h2 { top: 38%; left: 25%; transform: rotate(-15deg); }
+        .h3 { top: 38%; left: 50%; transform: rotate(-15deg); }
+        .h4 { top: 23%; left: 56%; transform: rotate(80deg); }
+        .h5 { top: 23%; left: 40%; transform: rotate(80deg); }
+        .h6 { top: 66%; left: 25%; transform: rotate(15deg); }
+        .h7 { top: 23%; left: 64%; transform: rotate(80deg); }
+        .h8 { top: 38%; left: 73%; transform: rotate(15deg); }
+        .h9 { top: 95%; left: 25%; transform: rotate(15deg); }
+        .h10 { top: 52%; left: 32%; transform: rotate(80deg); }
+        .h11 { top: 52%; left: 40%; transform: rotate(80deg); }
+        .h12 { top: 93%; left: 73%; transform: rotate(-15deg); }
+        .h13 { top: 65%; left: 73%; transform: rotate(-15deg); }
+        .h14 { top: 65%; left: 50%; transform: rotate(-15deg); }
+        .h15 { top: 52%; left: 56%; transform: rotate(80deg); }
+        .h16 { top: 52%; left: 64%; transform: rotate(80deg); }
+        .h17 { top: 80%; left: 56%; transform: rotate(80deg); }
+        .h18 { top: 80%; left: 64%; transform: rotate(80deg); }
+        .h19 { top: 82%; left: 32%; transform: rotate(80deg); }
+        .h20 { top: 82%; left: 40%; transform: rotate(80deg); }
+        .h21 { top: 94%; left: 50%; transform: rotate(-15deg); }
+
 
 
         /* --- ESTILOS DEL MENÚ LATERAL (SIDEBAR) --- */
@@ -356,37 +362,70 @@
     <div class="huellas h4">👣</div>
     <div class="huellas h5">👣</div>
     <div class="huellas h6">👣</div>
+    <div class="huellas h7">👣</div>
+    <div class="huellas h8">👣</div>
+    <div class="huellas h9">👣</div>
+    <div class="huellas h10">👣</div>
+    <div class="huellas h11">👣</div>
+    <div class="huellas h12">👣</div>
+    <div class="huellas h13">👣</div>
+    <div class="huellas h14">👣</div>
+    <div class="huellas h15">👣</div>
+    <div class="huellas h16">👣</div>
+    <div class="huellas h17">👣</div>
+    <div class="huellas h18">👣</div>
+    <div class="huellas h19">👣</div>
+    <div class="huellas h20">👣</div>
+     <div class="huellas h21">👣</div>
 
     <div class="parque-map">
         
         <div class="estacion-juego" onclick="location.href='#'">
-            <div class="arbusto"><span class="icono-estacion"></span></div>
+            <div class="contenedor-imagen">
+                <img src="{% static 'core/Iconos-I/1.png' %}" alt="Descripción del Regalo">
+                </div>
         </div>
         <div class="estacion-juego" onclick="location.href='#'">
-            <div class="arbusto"><span class="icono-estacion">⛲</span></div>
+            <div class="contenedor-imagen">
+                <img src="{% static 'core/Iconos-I/2.png' %}" alt="Descripción del Regalo">
+                </div>
         </div>
         <div class="estacion-juego" onclick="location.href='#'">
-            <div class="arbusto"><span class="icono-estacion">🔤</span></div>
+            <div class="contenedor-imagen">
+                <img src="{% static 'core/Iconos-I/3.png' %}" alt="Descripción del Regalo">
+                </div>
         </div>
 
         <div class="estacion-juego" onclick="location.href='#'">
-            <div class="arbusto"><span class="icono-estacion">🎲</span></div>
-        </div>
-        <div class="estacion-juego estacion-centro" onclick="location.href='#'">
-            <div class="arbusto"><span class="icono-estacion">🌳</span></div>
+            <div class="contenedor-imagen">
+                <img src="{% static 'core/Iconos-I/4.png' %}" alt="Descripción del Regalo">
+                </div>
         </div>
         <div class="estacion-juego" onclick="location.href='#'">
-            <div class="arbusto"><span class="icono-estacion">🛝</span></div>
+            <div class="contenedor-imagen">
+                <img src="{% static 'core/Iconos-I/5.png' %}" alt="Descripción del Regalo">
+                </div>
+        </div>
+        <div class="estacion-juego" onclick="location.href='#'">
+            <div class="contenedor-imagen">
+                <img src="{% static 'core/Iconos-I/6.png' %}" alt="Descripción del Regalo">
+                </div>
         </div>
 
         <div class="estacion-juego" onclick="location.href='#'">
-            <div class="arbusto"><span class="icono-estacion">🏠</span></div>
+            <div class="contenedor-imagen">
+                <img src="{% static 'core/Iconos-I/7.png' %}" alt="Descripción del Regalo">
+                </div>
         </div>
         <div class="estacion-juego" onclick="location.href='#'">
-            <div class="arbusto"><span class="icono-estacion">🐱</span></div>
+            <div class="contenedor-imagen">
+                <img src="{% static 'core/Iconos-I/8.png' %}" alt="Descripción del Regalo">
+                </div>
         </div>
         <div class="estacion-juego" onclick="location.href='#'">
-            <div class="arbusto"><span class="icono-estacion">🏖️</span></div>
+            <div class="contenedor-imagen">
+                <img src="{% static 'core/Iconos-I/9.png' %}" alt="Descripción del Regalo">
+                </div>
         </div>
 
     </div>
