@@ -24,27 +24,60 @@
             width: 100%;
             height: 100vh;
             position: relative;
+            /* Transición suave para cuando añadamos la clase de salida */
+            transition: opacity 0.8s ease-in-out; 
+            opacity: 1;
         }
         .logo-carga {
             width: 100%;
             height: 100vh;
-            object-fit: cover; /* Hace que la imagen cubra toda la pantalla adaptándose sin deformarse */
-            object-position: center; /* Centra la imagen para que no se corte lo importante */
+            object-fit: cover; 
+            object-position: center; 
             display: block;
+            /* Aplicamos la animación de pulso/respiración */
+            animation: pulsoSuave 6s ease-in-out infinite;
+        }
+
+        /* Clase que usaremos con JavaScript para el desvanecimiento final */
+        .fade-out {
+            opacity: 0;
+        }
+
+        /* KEYFRAMES: Animación de zoom muy sutil para que parezca viva */
+        @keyframes pulsoSuave {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.04); /* Un zoom muy ligero para no romper el diseño */
+            }
+            100% {
+                transform: scale(1);
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="loading-container">
+    <div class="loading-container" id="loader">
         <img src="{% static 'core/Imagenes/Carga.jpeg' %}" alt="Bienvenido a Pasitos al Saber" class="logo-carga">
     </div>
 
     <script>
-        // Redirección automática configurada a 8 segundos (8000 milisegundos)
+        // Nota: En tu comentario decías 8s pero tenías 5000ms (5s). 
+        // Lo configuré a 5 segundos en total.
+        const tiempoTotal = 5000; 
+        const tiempoAnimacionSalida = 800; // 0.8 segundos (coincide con el CSS)
+
+        // 1. Iniciamos el desvanecimiento un poco antes de que termine el tiempo total
+        setTimeout(function() {
+            document.getElementById('loader').classList.add('fade-out');
+        }, tiempoTotal - tiempoAnimacionSalida);
+
+        // 2. Redirección automática al cumplir el tiempo total
         setTimeout(function() {
             window.location.href = "{% url 'crear_perfil' %}";
-        }, 5000);
+        }, tiempoTotal);
     </script>
 
 </body>
